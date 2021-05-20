@@ -9,7 +9,9 @@ class AuthWidget extends StatefulWidget {
     BuildContext ctx,
   ) onSubAuthFn;
 
-  AuthWidget(this.onSubAuthFn);
+  final bool isLoading;
+
+  AuthWidget(this.onSubAuthFn, this.isLoading);
 
   @override
   _AuthWidgetState createState() => _AuthWidgetState();
@@ -96,20 +98,30 @@ class _AuthWidgetState extends State<AuthWidget> {
                     _userPass = v;
                   },
                 ),
-                RaisedButton(
-                  onPressed: _trySubmit,
-                  child: Text(_logIn ? 'Log In' : 'Sign Up'),
+                SizedBox(
+                  height: 10,
                 ),
-                FlatButton(
-                  textColor: Theme.of(context).primaryColor,
-                  child: Text(
-                      _logIn ? 'Create New Account' : 'i already have account'),
-                  onPressed: () {
-                    setState(() {
-                      _logIn = !_logIn;
-                    });
-                  },
-                ),
+                if (widget.isLoading)
+                  Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                if (!widget.isLoading)
+                  RaisedButton(
+                    onPressed: _trySubmit,
+                    child: Text(_logIn ? 'Log In' : 'Sign Up'),
+                  ),
+                if (!widget.isLoading)
+                  FlatButton(
+                    textColor: Theme.of(context).primaryColor,
+                    child: Text(_logIn
+                        ? 'Create New Account'
+                        : 'i already have account'),
+                    onPressed: () {
+                      setState(() {
+                        _logIn = !_logIn;
+                      });
+                    },
+                  ),
               ],
             ),
           ),

@@ -1,7 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../widget/auth/auth.dart';
+import '../widget/auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AuthScreen extends StatefulWidget {
   @override
@@ -10,6 +11,7 @@ class AuthScreen extends StatefulWidget {
 
 class _AuthScreenState extends State<AuthScreen> {
   final _auth = FirebaseAuth.instance;
+  var isLoading = false;
   void onSubmitAuth(
     String email,
     String username,
@@ -19,13 +21,25 @@ class _AuthScreenState extends State<AuthScreen> {
   ) async {
     AuthResult _authResult;
     try {
+      setState(() {
+        isLoading = true;
+      });
       if (isLogIn) {
         _authResult = await _auth.signInWithEmailAndPassword(
             email: email, password: pass);
       } else {
         _authResult = await _auth.createUserWithEmailAndPassword(
             email: email, password: pass);
+        Firestore.instance
+            .collection('users')
+            .document(_authResult.user.uid)
+            .setData({
+          'userName': username,
+        });
       }
+      setState(() {
+        isLoading = false;
+      });
     } on PlatformException catch (e) {
       var message = 'an error occured please check ur credential';
 
@@ -39,6 +53,14 @@ class _AuthScreenState extends State<AuthScreen> {
           backgroundColor: Theme.of(ctx).errorColor,
         ),
       );
+      setState(() {
+        isLoading = false;
+      });
+    } catch (e) {
+      print(e);
+      setState(() {
+        isLoading = false;
+      });
     }
   }
 
@@ -48,7 +70,7 @@ class _AuthScreenState extends State<AuthScreen> {
       body: Container(
         color: Colors.pink,
         child: Center(
-          child: AuthWidget(onSubmitAuth),
+          child: AuthWidget(onSubmitAuth, isLoading),
         ),
       ),
     );

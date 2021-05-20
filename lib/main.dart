@@ -1,4 +1,5 @@
 import 'package:chat_app/screens/auth_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import './screens/chat_screen.dart';
 
@@ -11,6 +12,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
           primarySwatch: Colors.pink,
           backgroundColor: Colors.pink,
@@ -23,7 +25,15 @@ class MyApp extends StatelessWidget {
               borderRadius: BorderRadius.circular(20),
             ),
           )),
-      home: AuthScreen(),
+      home: StreamBuilder(
+        stream: FirebaseAuth.instance.onAuthStateChanged,
+        builder: (ctx, snapShots) {
+          if (snapShots.hasData) {
+            return ChatScreen();
+          }
+          return AuthScreen();
+        },
+      ),
     );
   }
 }
