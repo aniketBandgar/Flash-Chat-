@@ -38,6 +38,7 @@ class _MessagesState extends State<Messages> {
                     chatData[i]['text'],
                     chatData[i]['userId'] == futureSnapShot.data.uid,
                     chatData[i]['username'],
+                    chatData[i]['userImage'],
                     key: ValueKey(chatData[i].documentID),
                   );
                 },

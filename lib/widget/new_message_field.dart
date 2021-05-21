@@ -21,6 +21,7 @@ class _NewMessageFieldState extends State<NewMessageField> {
       'createdAt': Timestamp.now(),
       'userId': user.uid,
       'username': userData['userName'],
+      'userImage': userData['imageUrl'],
     });
     _controller.clear();
   }
